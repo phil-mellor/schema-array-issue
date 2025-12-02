@@ -119,9 +119,8 @@ export default class ApplicationComponent extends Component {
           </div>
 
           <div class="alert">
-            Issue 1: if you add a second widget using the array re-assignment
-            approach, the page will crash due to infinite recursion. It doesn't
-            matter how you added the first widget(s).
+            Issue: when adding a second widget using array reassignment, the
+            application crashes with an infinite recursion error.
           </div>
         </div>
 
@@ -213,15 +212,15 @@ export default class ApplicationComponent extends Component {
 
           <div class="container">
             <div class="alert">
-              Issue 2: if you edit a widget title using an input field from either approach,
-              the change will not be reflected in the <strong>display</strong> area when it is
-              enumerated using #each. The change is, however, reflected in the <strong>display</strong> area
-              when it is enumerated using #let, get and index.
+              Issue: when editing a widget title using an input field from
+              either approach, the change does not update the display section
+              that uses the #each approach.
             </div>
 
             <div class="alert">
-              Issue 3: if you edit a widget title using an input field from the second approach,
-              the change will not be reflected in the corresponding input field in the first approach.
+              Issue: when editing a widget title using an input field from the
+              #let/get/index approach, the change does not propagate to the
+              corresponding input field in the #each approach.
             </div>
           </div>
         {{else}}
