@@ -12,11 +12,12 @@ let globalWidgetCounter = 0;
 function createNewWidget() {
   // Widget is a schema object, not a record, so we can't
   // create it using the store service.
+  globalWidgetCounter++;
+
   const widget = {
     widgetId: `widget-${globalWidgetCounter}`,
-    title: `New widget ${globalWidgetCounter}`,
+    title: `Original title for widget ${globalWidgetCounter}`,
   };
-  globalWidgetCounter++;
 
   return widget;
 }
@@ -25,6 +26,8 @@ export default class ApplicationComponent extends Component {
   @service declare store: Store;
 
   @tracked gizmo: Gizmo | null = null;
+  @tracked debuggingInformation: string =
+    'Click the button to refresh the state...';
 
   createGizmo = () => {
     // Gizmo is a record, so we can create it directly.
@@ -57,113 +60,202 @@ export default class ApplicationComponent extends Component {
     widget.title = (event.target as HTMLInputElement).value;
   };
 
+  refreshDebuggingInformation = () => {
+    this.debuggingInformation = JSON.stringify(
+      {
+        title: this.gizmo!.title,
+        widgets: this.gizmo!.widgets.map((widget) => ({
+          widgetId: widget.widgetId,
+          title: widget.title,
+        })),
+      },
+      null,
+      2
+    );
+  };
+
   <template>
     {{outlet}}
     <form>
       {{#if this.gizmo}}
-        <h1>Gizmo: "{{this.gizmo.title}}"</h1>
-        <p>This is the gizmo title. It is displayed in the heading above. You can edit it in the input field below.</p>
-        <div>
-          <label for="title">Gizmo title:</label>
-          <input type="text" id="title" value={{this.gizmo.title}} {{on "change" this.updateTitle}} />
-        </div>
+        <div class="container">
+          <h1>Gizmo: "{{this.gizmo.title}}"</h1>
+          <p>This is the gizmo title. It is displayed in the heading above. You
+            can edit it in the input field below.</p>
+          <div>
+            <label for="title">Gizmo title:</label>
+            <input
+              type="text"
+              id="title"
+              value={{this.gizmo.title}}
+              {{on "change" this.updateTitle}}
+            />
+          </div>
 
-        <div class="good">
-          When tabbing out of the input field, the title will be updated above. This is the expected behavior.
-        </div>
+          <div class="good">
+            When tabbing out of the input field, the title will be updated
+            above. This is the expected behavior.
+          </div>
 
-        <h2>Widgets</h2>
-        <p>A gizmo can have multiple widgets. By default there are no widgets.</p>
+          <p>A gizmo can have multiple widgets. By default there are no widgets.</p>
 
-        <p>Widgets can be added using two different approaches:</p>
-        <ul>
-          <li>Using array push: <code>this.gizmo!.widgets.push(widget)</code></li>
-          <li>By assigning a new array: <code>this.gizmo!.widgets = [...this.gizmo!.widgets, widget]</code></li>
-        </ul>
+          <p>Widgets can be added using two different approaches:</p>
+          <ul>
+            <li>Using array push:
+              <code>this.gizmo!.widgets.push(widget)</code></li>
+            <li>By assigning a new array:
+              <code>this.gizmo!.widgets = [...this.gizmo!.widgets, widget]</code></li>
+          </ul>
 
-        <button type="button" {{on "click" this.addWidgetUsingArrayPush}}>Add widget using array push</button>
-        <button type="button" {{on "click" this.addWidgetByAssigningArray}}>Add widget by re-assigning array</button>
+          <div class="buttons">
+            <button
+              type="button"
+              {{on "click" this.addWidgetUsingArrayPush}}
+            >Add widget using array push</button>
+            <button
+              type="button"
+              {{on "click" this.addWidgetByAssigningArray}}
+            >Add widget by re-assigning array</button>
+          </div>
 
-        <div class="alert">
-          Issue 1: if you add a second widget using the array re-assignment approach, the page will crash due to infinite recursion.
-          It doesn't matter how you added the first widget(s).
+          <div class="alert">
+            Issue 1: if you add a second widget using the array re-assignment
+            approach, the page will crash due to infinite recursion. It doesn't
+            matter how you added the first widget(s).
+          </div>
         </div>
 
         {{#if this.gizmo.widgets.length}}
-          <h3>Widget display</h3>
-          <p>The widgets are displayed below. Here we enumerate the widgets using two different approaches:</p>
-          <ul>
-            <li>A simple each loop: <code>#each this.gizmo.widgets as |widget|</code></li>
-            <li>An each loop getting each element by its index: <code>#each this.gizmo.widgets as |_ index|</code> and <code>let (get this.gizmo.widgets index) as |widget|</code></li>
-          </ul>
+          <div class="container">
+            <h2>Widget display</h2>
+            <p>The widgets are displayed below. Here we enumerate the widgets
+              using two different approaches:</p>
+          </div>
 
           <div class="cols">
-            <div class="col">
+            <div class="col type1">
               <h3>Widgets enumerated using #each:</h3>
-              <ul>
+              <p>A simple each loop:
+                <code>#each this.gizmo.widgets as |widget|</code></p>
+              <ol>
                 {{#each this.gizmo.widgets as |widget|}}
-                  <ol>
+                  <li>
                     {{widget.title}}
-                  </ol>
+                  </li>
                 {{/each}}
-              </ul>
+              </ol>
             </div>
-            <div class="col">
+            <div class="col type2">
               <h3>Widgets enumerated using #let, get and index:</h3>
-              <ul>
+              <p>An #each loop that gets each element by its index:
+                <code>#each this.gizmo.widgets as |_ index|</code>
+                and
+                <code>let (get this.gizmo.widgets index) as |widget|</code></p>
+              <ol>
                 {{#each this.gizmo.widgets as |_ index|}}
                   {{#let (get this.gizmo.widgets index) as |widget|}}
-                    <ol>
+                    <li>
                       {{widget.title}}
-                    </ol>
+                    </li>
                   {{/let}}
                 {{/each}}
-              </ul>
+              </ol>
             </div>
           </div>
 
-          <h3>Widget editing</h3>
-          <p>We allow editing of the widget titles. Again, we use two different approaches to enumerate the widgets:</p>
-          <ul>
-            <li>A simple each loop: <code>#each this.gizmo.widgets as |widget|</code></li>
-            <li>An each loop getting each element by its index: <code>#each this.gizmo.widgets as |_ index|</code> and <code>let (get this.gizmo.widgets index) as |widget|</code></li>
-          </ul>
+          <div class="container">
+            <hr />
+            <h2>Widget editing</h2>
+            <p>We allow editing of the widget titles. Again, we use two
+              different approaches to enumerate the widgets:</p>
+          </div>
 
           <div class="cols">
-            <div class="col">
+            <div class="col type1">
               <h3>Input fields enumerated using #each:</h3>
-              {{#each this.gizmo.widgets as |widget|}}
-                <div>
-                  <input aria-label="Widget title" type="text" value={{widget.title}} {{on "change" (fn this.updateWidget widget)}} />
-                </div>
-              {{/each}}
+              <p>A simple each loop:
+                <code>#each this.gizmo.widgets as |widget|</code></p>
+              <ol>
+                {{#each this.gizmo.widgets as |widget|}}
+                  <li>
+                    <input
+                      aria-label="Widget title"
+                      type="text"
+                      value={{widget.title}}
+                      {{on "change" (fn this.updateWidget widget)}}
+                    />
+                  </li>
+                {{/each}}
+              </ol>
             </div>
-            <div class="col">
+            <div class="col type2">
               <h3>Input fields enumerated using #let, get and index:</h3>
-              {{#each this.gizmo.widgets as |_ index|}}
-                {{#let (get this.gizmo.widgets index) as |widget|}}
-                  <div>
-                    <input aria-label="Widget title" type="text" value={{widget.title}} {{on "change" (fn this.updateWidget widget)}} />
-                  </div>
-                {{/let}}
-              {{/each}}
+              <p>An #each loop that gets each element by its index:
+                <code>#each this.gizmo.widgets as |_ index|</code>
+                and
+                <code>let (get this.gizmo.widgets index) as |widget|</code></p>
+              <ol>
+                {{#each this.gizmo.widgets as |_ index|}}
+                  {{#let (get this.gizmo.widgets index) as |widget|}}
+                    <li>
+                      <input
+                        aria-label="Widget title"
+                        type="text"
+                        value={{widget.title}}
+                        {{on "change" (fn this.updateWidget widget)}}
+                      />
+                    </li>
+                  {{/let}}
+                {{/each}}
+              </ol>
             </div>
           </div>
 
-          <div class="alert">
-            Issue 2: if you edit a widget title using either of the input fields, the change will not be reflected in
-            the display when it is enumerated using #each. The change is reflected in the display when it is enumerated using #let, get and index.
-          </div>
+          <div class="container">
+            <div class="alert">
+              Issue 2: if you edit a widget title using an input field from either approach,
+              the change will not be reflected in the <strong>display</strong> area when it is
+              enumerated using #each. The change is, however, reflected in the <strong>display</strong> area
+              when it is enumerated using #let, get and index.
+            </div>
 
-          <div class="alert">
-            Issue 3: if you edit a widget title using the second input field, the change will not be reflected in
-            the first input field.  The change is reflected in the list when it is enumerated using #let, get and index.
+            <div class="alert">
+              Issue 3: if you edit a widget title using an input field from the second approach,
+              the change will not be reflected in the corresponding input field in the first approach.
+            </div>
           </div>
         {{else}}
-          <p>No widgets found - please add some.</p>
+          <div class="container">
+            <p>No widgets found - please add some.</p>
+          </div>
         {{/if}}
+
+        <hr />
+
+        <div class="container">
+          <h2>Debugging information</h2>
+          <p>You can display the current state of the gizmo by clicking the
+            button below.</p>
+          <p>This is
+            <strong>not</strong>
+            refreshed automatically when the gizmo is changed, only when you
+            click the button.</p>
+
+          <div class="buttons">
+            <button
+              type="button"
+              {{on "click" this.refreshDebuggingInformation}}
+            >Log state</button>
+          </div>
+
+          <div class="output">
+            <pre>{{this.debuggingInformation}}</pre>
+          </div>
+        </div>
       {{else}}
-        <button type="button" {{on "click" this.createGizmo}}>Create Gizmo</button>
+        <div class="buttons">
+          <button type="button" {{on "click" this.createGizmo}}>Create Gizmo</button>
+        </div>
       {{/if}}
     </form>
   </template>
