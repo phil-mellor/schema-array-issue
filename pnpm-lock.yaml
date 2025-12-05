@@ -4,6 +4,14 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  '@warp-drive/core':
+    hash: 97451be35eef181df0eff35e6b52b4a7e9fc09a4c157ae72559c1d2501637946
+    path: patches/@warp-drive__core.patch
+  '@warp-drive/json-api':
+    hash: c9c9862de00c8d70657d0fe231b13a0eb81770d04b5ffbdf15d87e4eb9a23f78
+    path: patches/@warp-drive__json-api.patch
+
 importers:
 
   .:
@@ -124,7 +132,7 @@ importers:
         version: 4.0.9
       '@warp-drive/core':
         specifier: 5.8.0
-        version: 5.8.0(@babel/core@7.28.5)(@glint/template@1.7.3)
+        version: 5.8.0(patch_hash=97451be35eef181df0eff35e6b52b4a7e9fc09a4c157ae72559c1d2501637946)(@babel/core@7.28.5)(@glint/template@1.7.3)
       '@warp-drive/core-types':
         specifier: 5.8.0
         version: 5.8.0(@babel/core@7.28.5)(@glint/template@1.7.3)
@@ -133,13 +141,13 @@ importers:
         version: 5.8.0(@babel/core@7.28.5)(@ember/test-waiters@4.1.1(@glint/template@1.7.3))(@glint/template@1.7.3)
       '@warp-drive/json-api':
         specifier: 5.8.0
-        version: 5.8.0(@glint/template@1.7.3)(@warp-drive/core@5.8.0(@babel/core@7.28.5)(@glint/template@1.7.3))
+        version: 5.8.0(patch_hash=c9c9862de00c8d70657d0fe231b13a0eb81770d04b5ffbdf15d87e4eb9a23f78)(@glint/template@1.7.3)(@warp-drive/core@5.8.0(patch_hash=97451be35eef181df0eff35e6b52b4a7e9fc09a4c157ae72559c1d2501637946)(@babel/core@7.28.5)(@glint/template@1.7.3))
       '@warp-drive/legacy':
         specifier: 5.8.0
-        version: 5.8.0(@glint/template@1.7.3)(@warp-drive/core@5.8.0(@babel/core@7.28.5)(@glint/template@1.7.3))(@warp-drive/utilities@5.8.0(@glint/template@1.7.3)(@warp-drive/core@5.8.0(@babel/core@7.28.5)(@glint/template@1.7.3)))
+        version: 5.8.0(@glint/template@1.7.3)(@warp-drive/core@5.8.0(patch_hash=97451be35eef181df0eff35e6b52b4a7e9fc09a4c157ae72559c1d2501637946)(@babel/core@7.28.5)(@glint/template@1.7.3))(@warp-drive/utilities@5.8.0(@glint/template@1.7.3)(@warp-drive/core@5.8.0(patch_hash=97451be35eef181df0eff35e6b52b4a7e9fc09a4c157ae72559c1d2501637946)(@babel/core@7.28.5)(@glint/template@1.7.3)))
       '@warp-drive/utilities':
         specifier: 5.8.0
-        version: 5.8.0(@glint/template@1.7.3)(@warp-drive/core@5.8.0(@babel/core@7.28.5)(@glint/template@1.7.3))
+        version: 5.8.0(@glint/template@1.7.3)(@warp-drive/core@5.8.0(patch_hash=97451be35eef181df0eff35e6b52b4a7e9fc09a4c157ae72559c1d2501637946)(@babel/core@7.28.5)(@glint/template@1.7.3))
       babel-plugin-ember-template-compilation:
         specifier: ^2.4.1
         version: 2.4.1
@@ -7219,9 +7227,9 @@ snapshots:
     dependencies:
       '@ember/edition-utils': 1.2.0
       '@embroider/macros': 1.19.5(@glint/template@1.7.3)
-      '@warp-drive/core': 5.8.0(@babel/core@7.28.5)(@glint/template@1.7.3)
-      '@warp-drive/legacy': 5.8.0(@glint/template@1.7.3)(@warp-drive/core@5.8.0(@babel/core@7.28.5)(@glint/template@1.7.3))(@warp-drive/utilities@5.8.0(@glint/template@1.7.3)(@warp-drive/core@5.8.0(@babel/core@7.28.5)(@glint/template@1.7.3)))
-      '@warp-drive/utilities': 5.8.0(@glint/template@1.7.3)(@warp-drive/core@5.8.0(@babel/core@7.28.5)(@glint/template@1.7.3))
+      '@warp-drive/core': 5.8.0(patch_hash=97451be35eef181df0eff35e6b52b4a7e9fc09a4c157ae72559c1d2501637946)(@babel/core@7.28.5)(@glint/template@1.7.3)
+      '@warp-drive/legacy': 5.8.0(@glint/template@1.7.3)(@warp-drive/core@5.8.0(patch_hash=97451be35eef181df0eff35e6b52b4a7e9fc09a4c157ae72559c1d2501637946)(@babel/core@7.28.5)(@glint/template@1.7.3))(@warp-drive/utilities@5.8.0(@glint/template@1.7.3)(@warp-drive/core@5.8.0(patch_hash=97451be35eef181df0eff35e6b52b4a7e9fc09a4c157ae72559c1d2501637946)(@babel/core@7.28.5)(@glint/template@1.7.3)))
+      '@warp-drive/utilities': 5.8.0(@glint/template@1.7.3)(@warp-drive/core@5.8.0(patch_hash=97451be35eef181df0eff35e6b52b4a7e9fc09a4c157ae72559c1d2501637946)(@babel/core@7.28.5)(@glint/template@1.7.3))
       ember-cli-path-utils: 1.0.0
       ember-cli-string-utils: 1.1.0
       ember-cli-test-info: 1.0.0
@@ -7234,8 +7242,8 @@ snapshots:
     dependencies:
       '@ember/edition-utils': 1.2.0
       '@embroider/macros': 1.19.5(@glint/template@1.7.3)
-      '@warp-drive/core': 5.8.0(@babel/core@7.28.5)(@glint/template@1.7.3)
-      '@warp-drive/utilities': 5.8.0(@glint/template@1.7.3)(@warp-drive/core@5.8.0(@babel/core@7.28.5)(@glint/template@1.7.3))
+      '@warp-drive/core': 5.8.0(patch_hash=97451be35eef181df0eff35e6b52b4a7e9fc09a4c157ae72559c1d2501637946)(@babel/core@7.28.5)(@glint/template@1.7.3)
+      '@warp-drive/utilities': 5.8.0(@glint/template@1.7.3)(@warp-drive/core@5.8.0(patch_hash=97451be35eef181df0eff35e6b52b4a7e9fc09a4c157ae72559c1d2501637946)(@babel/core@7.28.5)(@glint/template@1.7.3))
     transitivePeerDependencies:
       - '@babel/core'
       - '@glint/template'
@@ -7244,7 +7252,7 @@ snapshots:
   '@ember-data/graph@5.8.0(@babel/core@7.28.5)(@glint/template@1.7.3)':
     dependencies:
       '@embroider/macros': 1.19.5(@glint/template@1.7.3)
-      '@warp-drive/core': 5.8.0(@babel/core@7.28.5)(@glint/template@1.7.3)
+      '@warp-drive/core': 5.8.0(patch_hash=97451be35eef181df0eff35e6b52b4a7e9fc09a4c157ae72559c1d2501637946)(@babel/core@7.28.5)(@glint/template@1.7.3)
     transitivePeerDependencies:
       - '@babel/core'
       - '@glint/template'
@@ -7253,9 +7261,9 @@ snapshots:
   '@ember-data/json-api@5.8.0(@babel/core@7.28.5)(@glint/template@1.7.3)':
     dependencies:
       '@embroider/macros': 1.19.5(@glint/template@1.7.3)
-      '@warp-drive/core': 5.8.0(@babel/core@7.28.5)(@glint/template@1.7.3)
-      '@warp-drive/json-api': 5.8.0(@glint/template@1.7.3)(@warp-drive/core@5.8.0(@babel/core@7.28.5)(@glint/template@1.7.3))
-      '@warp-drive/utilities': 5.8.0(@glint/template@1.7.3)(@warp-drive/core@5.8.0(@babel/core@7.28.5)(@glint/template@1.7.3))
+      '@warp-drive/core': 5.8.0(patch_hash=97451be35eef181df0eff35e6b52b4a7e9fc09a4c157ae72559c1d2501637946)(@babel/core@7.28.5)(@glint/template@1.7.3)
+      '@warp-drive/json-api': 5.8.0(patch_hash=c9c9862de00c8d70657d0fe231b13a0eb81770d04b5ffbdf15d87e4eb9a23f78)(@glint/template@1.7.3)(@warp-drive/core@5.8.0(patch_hash=97451be35eef181df0eff35e6b52b4a7e9fc09a4c157ae72559c1d2501637946)(@babel/core@7.28.5)(@glint/template@1.7.3))
+      '@warp-drive/utilities': 5.8.0(@glint/template@1.7.3)(@warp-drive/core@5.8.0(patch_hash=97451be35eef181df0eff35e6b52b4a7e9fc09a4c157ae72559c1d2501637946)(@babel/core@7.28.5)(@glint/template@1.7.3))
     transitivePeerDependencies:
       - '@babel/core'
       - '@glint/template'
@@ -7264,9 +7272,9 @@ snapshots:
   '@ember-data/legacy-compat@5.8.0(@babel/core@7.28.5)(@glint/template@1.7.3)':
     dependencies:
       '@embroider/macros': 1.19.5(@glint/template@1.7.3)
-      '@warp-drive/core': 5.8.0(@babel/core@7.28.5)(@glint/template@1.7.3)
-      '@warp-drive/legacy': 5.8.0(@glint/template@1.7.3)(@warp-drive/core@5.8.0(@babel/core@7.28.5)(@glint/template@1.7.3))(@warp-drive/utilities@5.8.0(@glint/template@1.7.3)(@warp-drive/core@5.8.0(@babel/core@7.28.5)(@glint/template@1.7.3)))
-      '@warp-drive/utilities': 5.8.0(@glint/template@1.7.3)(@warp-drive/core@5.8.0(@babel/core@7.28.5)(@glint/template@1.7.3))
+      '@warp-drive/core': 5.8.0(patch_hash=97451be35eef181df0eff35e6b52b4a7e9fc09a4c157ae72559c1d2501637946)(@babel/core@7.28.5)(@glint/template@1.7.3)
+      '@warp-drive/legacy': 5.8.0(@glint/template@1.7.3)(@warp-drive/core@5.8.0(patch_hash=97451be35eef181df0eff35e6b52b4a7e9fc09a4c157ae72559c1d2501637946)(@babel/core@7.28.5)(@glint/template@1.7.3))(@warp-drive/utilities@5.8.0(@glint/template@1.7.3)(@warp-drive/core@5.8.0(patch_hash=97451be35eef181df0eff35e6b52b4a7e9fc09a4c157ae72559c1d2501637946)(@babel/core@7.28.5)(@glint/template@1.7.3)))
+      '@warp-drive/utilities': 5.8.0(@glint/template@1.7.3)(@warp-drive/core@5.8.0(patch_hash=97451be35eef181df0eff35e6b52b4a7e9fc09a4c157ae72559c1d2501637946)(@babel/core@7.28.5)(@glint/template@1.7.3))
     transitivePeerDependencies:
       - '@babel/core'
       - '@glint/template'
@@ -7276,9 +7284,9 @@ snapshots:
     dependencies:
       '@ember/edition-utils': 1.2.0
       '@embroider/macros': 1.19.5(@glint/template@1.7.3)
-      '@warp-drive/core': 5.8.0(@babel/core@7.28.5)(@glint/template@1.7.3)
-      '@warp-drive/legacy': 5.8.0(@glint/template@1.7.3)(@warp-drive/core@5.8.0(@babel/core@7.28.5)(@glint/template@1.7.3))(@warp-drive/utilities@5.8.0(@glint/template@1.7.3)(@warp-drive/core@5.8.0(@babel/core@7.28.5)(@glint/template@1.7.3)))
-      '@warp-drive/utilities': 5.8.0(@glint/template@1.7.3)(@warp-drive/core@5.8.0(@babel/core@7.28.5)(@glint/template@1.7.3))
+      '@warp-drive/core': 5.8.0(patch_hash=97451be35eef181df0eff35e6b52b4a7e9fc09a4c157ae72559c1d2501637946)(@babel/core@7.28.5)(@glint/template@1.7.3)
+      '@warp-drive/legacy': 5.8.0(@glint/template@1.7.3)(@warp-drive/core@5.8.0(patch_hash=97451be35eef181df0eff35e6b52b4a7e9fc09a4c157ae72559c1d2501637946)(@babel/core@7.28.5)(@glint/template@1.7.3))(@warp-drive/utilities@5.8.0(@glint/template@1.7.3)(@warp-drive/core@5.8.0(patch_hash=97451be35eef181df0eff35e6b52b4a7e9fc09a4c157ae72559c1d2501637946)(@babel/core@7.28.5)(@glint/template@1.7.3)))
+      '@warp-drive/utilities': 5.8.0(@glint/template@1.7.3)(@warp-drive/core@5.8.0(patch_hash=97451be35eef181df0eff35e6b52b4a7e9fc09a4c157ae72559c1d2501637946)(@babel/core@7.28.5)(@glint/template@1.7.3))
       ember-cli-string-utils: 1.1.0
       ember-cli-test-info: 1.0.0
       inflection: 3.0.2
@@ -7290,8 +7298,8 @@ snapshots:
   '@ember-data/request-utils@5.8.0(@babel/core@7.28.5)(@glint/template@1.7.3)':
     dependencies:
       '@embroider/macros': 1.19.5(@glint/template@1.7.3)
-      '@warp-drive/core': 5.8.0(@babel/core@7.28.5)(@glint/template@1.7.3)
-      '@warp-drive/utilities': 5.8.0(@glint/template@1.7.3)(@warp-drive/core@5.8.0(@babel/core@7.28.5)(@glint/template@1.7.3))
+      '@warp-drive/core': 5.8.0(patch_hash=97451be35eef181df0eff35e6b52b4a7e9fc09a4c157ae72559c1d2501637946)(@babel/core@7.28.5)(@glint/template@1.7.3)
+      '@warp-drive/utilities': 5.8.0(@glint/template@1.7.3)(@warp-drive/core@5.8.0(patch_hash=97451be35eef181df0eff35e6b52b4a7e9fc09a4c157ae72559c1d2501637946)(@babel/core@7.28.5)(@glint/template@1.7.3))
     transitivePeerDependencies:
       - '@babel/core'
       - '@glint/template'
@@ -7300,7 +7308,7 @@ snapshots:
   '@ember-data/request@5.8.0(@babel/core@7.28.5)(@glint/template@1.7.3)':
     dependencies:
       '@embroider/macros': 1.19.5(@glint/template@1.7.3)
-      '@warp-drive/core': 5.8.0(@babel/core@7.28.5)(@glint/template@1.7.3)
+      '@warp-drive/core': 5.8.0(patch_hash=97451be35eef181df0eff35e6b52b4a7e9fc09a4c157ae72559c1d2501637946)(@babel/core@7.28.5)(@glint/template@1.7.3)
     transitivePeerDependencies:
       - '@babel/core'
       - '@glint/template'
@@ -7312,9 +7320,9 @@ snapshots:
     dependencies:
       '@ember/edition-utils': 1.2.0
       '@embroider/macros': 1.19.5(@glint/template@1.7.3)
-      '@warp-drive/core': 5.8.0(@babel/core@7.28.5)(@glint/template@1.7.3)
-      '@warp-drive/legacy': 5.8.0(@glint/template@1.7.3)(@warp-drive/core@5.8.0(@babel/core@7.28.5)(@glint/template@1.7.3))(@warp-drive/utilities@5.8.0(@glint/template@1.7.3)(@warp-drive/core@5.8.0(@babel/core@7.28.5)(@glint/template@1.7.3)))
-      '@warp-drive/utilities': 5.8.0(@glint/template@1.7.3)(@warp-drive/core@5.8.0(@babel/core@7.28.5)(@glint/template@1.7.3))
+      '@warp-drive/core': 5.8.0(patch_hash=97451be35eef181df0eff35e6b52b4a7e9fc09a4c157ae72559c1d2501637946)(@babel/core@7.28.5)(@glint/template@1.7.3)
+      '@warp-drive/legacy': 5.8.0(@glint/template@1.7.3)(@warp-drive/core@5.8.0(patch_hash=97451be35eef181df0eff35e6b52b4a7e9fc09a4c157ae72559c1d2501637946)(@babel/core@7.28.5)(@glint/template@1.7.3))(@warp-drive/utilities@5.8.0(@glint/template@1.7.3)(@warp-drive/core@5.8.0(patch_hash=97451be35eef181df0eff35e6b52b4a7e9fc09a4c157ae72559c1d2501637946)(@babel/core@7.28.5)(@glint/template@1.7.3)))
+      '@warp-drive/utilities': 5.8.0(@glint/template@1.7.3)(@warp-drive/core@5.8.0(patch_hash=97451be35eef181df0eff35e6b52b4a7e9fc09a4c157ae72559c1d2501637946)(@babel/core@7.28.5)(@glint/template@1.7.3))
       ember-cli-path-utils: 1.0.0
       ember-cli-string-utils: 1.1.0
       ember-cli-test-info: 1.0.0
@@ -7326,7 +7334,7 @@ snapshots:
   '@ember-data/store@5.8.0(@babel/core@7.28.5)(@ember-data/tracking@5.8.0(@babel/core@7.28.5)(@ember/test-waiters@4.1.1(@glint/template@1.7.3))(@glint/template@1.7.3))(@ember/test-waiters@4.1.1(@glint/template@1.7.3))(@glint/template@1.7.3)':
     dependencies:
       '@embroider/macros': 1.19.5(@glint/template@1.7.3)
-      '@warp-drive/core': 5.8.0(@babel/core@7.28.5)(@glint/template@1.7.3)
+      '@warp-drive/core': 5.8.0(patch_hash=97451be35eef181df0eff35e6b52b4a7e9fc09a4c157ae72559c1d2501637946)(@babel/core@7.28.5)(@glint/template@1.7.3)
     optionalDependencies:
       '@ember-data/tracking': 5.8.0(@babel/core@7.28.5)(@ember/test-waiters@4.1.1(@glint/template@1.7.3))(@glint/template@1.7.3)
       '@ember/test-waiters': 4.1.1(@glint/template@1.7.3)
@@ -7339,7 +7347,7 @@ snapshots:
     dependencies:
       '@ember/test-waiters': 4.1.1(@glint/template@1.7.3)
       '@embroider/macros': 1.19.5(@glint/template@1.7.3)
-      '@warp-drive/core': 5.8.0(@babel/core@7.28.5)(@glint/template@1.7.3)
+      '@warp-drive/core': 5.8.0(patch_hash=97451be35eef181df0eff35e6b52b4a7e9fc09a4c157ae72559c1d2501637946)(@babel/core@7.28.5)(@glint/template@1.7.3)
     transitivePeerDependencies:
       - '@babel/core'
       - '@glint/template'
@@ -8413,13 +8421,13 @@ snapshots:
   '@warp-drive/core-types@5.8.0(@babel/core@7.28.5)(@glint/template@1.7.3)':
     dependencies:
       '@embroider/macros': 1.19.5(@glint/template@1.7.3)
-      '@warp-drive/core': 5.8.0(@babel/core@7.28.5)(@glint/template@1.7.3)
+      '@warp-drive/core': 5.8.0(patch_hash=97451be35eef181df0eff35e6b52b4a7e9fc09a4c157ae72559c1d2501637946)(@babel/core@7.28.5)(@glint/template@1.7.3)
     transitivePeerDependencies:
       - '@babel/core'
       - '@glint/template'
       - supports-color
 
-  '@warp-drive/core@5.8.0(@babel/core@7.28.5)(@glint/template@1.7.3)':
+  '@warp-drive/core@5.8.0(patch_hash=97451be35eef181df0eff35e6b52b4a7e9fc09a4c157ae72559c1d2501637946)(@babel/core@7.28.5)(@glint/template@1.7.3)':
     dependencies:
       '@embroider/macros': 1.19.5(@glint/template@1.7.3)
       '@warp-drive/build-config': 5.8.0(@babel/core@7.28.5)(@glint/template@1.7.3)
@@ -8432,35 +8440,35 @@ snapshots:
     dependencies:
       '@ember/test-waiters': 4.1.1(@glint/template@1.7.3)
       '@embroider/macros': 1.19.5(@glint/template@1.7.3)
-      '@warp-drive/core': 5.8.0(@babel/core@7.28.5)(@glint/template@1.7.3)
+      '@warp-drive/core': 5.8.0(patch_hash=97451be35eef181df0eff35e6b52b4a7e9fc09a4c157ae72559c1d2501637946)(@babel/core@7.28.5)(@glint/template@1.7.3)
     transitivePeerDependencies:
       - '@babel/core'
       - '@glint/template'
       - supports-color
 
-  '@warp-drive/json-api@5.8.0(@glint/template@1.7.3)(@warp-drive/core@5.8.0(@babel/core@7.28.5)(@glint/template@1.7.3))':
+  '@warp-drive/json-api@5.8.0(patch_hash=c9c9862de00c8d70657d0fe231b13a0eb81770d04b5ffbdf15d87e4eb9a23f78)(@glint/template@1.7.3)(@warp-drive/core@5.8.0(patch_hash=97451be35eef181df0eff35e6b52b4a7e9fc09a4c157ae72559c1d2501637946)(@babel/core@7.28.5)(@glint/template@1.7.3))':
     dependencies:
       '@embroider/macros': 1.19.5(@glint/template@1.7.3)
-      '@warp-drive/core': 5.8.0(@babel/core@7.28.5)(@glint/template@1.7.3)
+      '@warp-drive/core': 5.8.0(patch_hash=97451be35eef181df0eff35e6b52b4a7e9fc09a4c157ae72559c1d2501637946)(@babel/core@7.28.5)(@glint/template@1.7.3)
       fuse.js: 7.1.0
       json-to-ast: 2.1.0
     transitivePeerDependencies:
       - '@glint/template'
       - supports-color
 
-  '@warp-drive/legacy@5.8.0(@glint/template@1.7.3)(@warp-drive/core@5.8.0(@babel/core@7.28.5)(@glint/template@1.7.3))(@warp-drive/utilities@5.8.0(@glint/template@1.7.3)(@warp-drive/core@5.8.0(@babel/core@7.28.5)(@glint/template@1.7.3)))':
+  '@warp-drive/legacy@5.8.0(@glint/template@1.7.3)(@warp-drive/core@5.8.0(patch_hash=97451be35eef181df0eff35e6b52b4a7e9fc09a4c157ae72559c1d2501637946)(@babel/core@7.28.5)(@glint/template@1.7.3))(@warp-drive/utilities@5.8.0(@glint/template@1.7.3)(@warp-drive/core@5.8.0(patch_hash=97451be35eef181df0eff35e6b52b4a7e9fc09a4c157ae72559c1d2501637946)(@babel/core@7.28.5)(@glint/template@1.7.3)))':
     dependencies:
       '@embroider/macros': 1.19.5(@glint/template@1.7.3)
-      '@warp-drive/core': 5.8.0(@babel/core@7.28.5)(@glint/template@1.7.3)
-      '@warp-drive/utilities': 5.8.0(@glint/template@1.7.3)(@warp-drive/core@5.8.0(@babel/core@7.28.5)(@glint/template@1.7.3))
+      '@warp-drive/core': 5.8.0(patch_hash=97451be35eef181df0eff35e6b52b4a7e9fc09a4c157ae72559c1d2501637946)(@babel/core@7.28.5)(@glint/template@1.7.3)
+      '@warp-drive/utilities': 5.8.0(@glint/template@1.7.3)(@warp-drive/core@5.8.0(patch_hash=97451be35eef181df0eff35e6b52b4a7e9fc09a4c157ae72559c1d2501637946)(@babel/core@7.28.5)(@glint/template@1.7.3))
     transitivePeerDependencies:
       - '@glint/template'
       - supports-color
 
-  '@warp-drive/utilities@5.8.0(@glint/template@1.7.3)(@warp-drive/core@5.8.0(@babel/core@7.28.5)(@glint/template@1.7.3))':
+  '@warp-drive/utilities@5.8.0(@glint/template@1.7.3)(@warp-drive/core@5.8.0(patch_hash=97451be35eef181df0eff35e6b52b4a7e9fc09a4c157ae72559c1d2501637946)(@babel/core@7.28.5)(@glint/template@1.7.3))':
     dependencies:
       '@embroider/macros': 1.19.5(@glint/template@1.7.3)
-      '@warp-drive/core': 5.8.0(@babel/core@7.28.5)(@glint/template@1.7.3)
+      '@warp-drive/core': 5.8.0(patch_hash=97451be35eef181df0eff35e6b52b4a7e9fc09a4c157ae72559c1d2501637946)(@babel/core@7.28.5)(@glint/template@1.7.3)
     transitivePeerDependencies:
       - '@glint/template'
       - supports-color
@@ -10069,12 +10077,12 @@ snapshots:
       '@ember/edition-utils': 1.2.0
       '@ember/test-waiters': 4.1.1(@glint/template@1.7.3)
       '@embroider/macros': 1.19.5(@glint/template@1.7.3)
-      '@warp-drive/core': 5.8.0(@babel/core@7.28.5)(@glint/template@1.7.3)
+      '@warp-drive/core': 5.8.0(patch_hash=97451be35eef181df0eff35e6b52b4a7e9fc09a4c157ae72559c1d2501637946)(@babel/core@7.28.5)(@glint/template@1.7.3)
       '@warp-drive/core-types': 5.8.0(@babel/core@7.28.5)(@glint/template@1.7.3)
       '@warp-drive/ember': 5.8.0(@babel/core@7.28.5)(@ember/test-waiters@4.1.1(@glint/template@1.7.3))(@glint/template@1.7.3)
-      '@warp-drive/json-api': 5.8.0(@glint/template@1.7.3)(@warp-drive/core@5.8.0(@babel/core@7.28.5)(@glint/template@1.7.3))
-      '@warp-drive/legacy': 5.8.0(@glint/template@1.7.3)(@warp-drive/core@5.8.0(@babel/core@7.28.5)(@glint/template@1.7.3))(@warp-drive/utilities@5.8.0(@glint/template@1.7.3)(@warp-drive/core@5.8.0(@babel/core@7.28.5)(@glint/template@1.7.3)))
-      '@warp-drive/utilities': 5.8.0(@glint/template@1.7.3)(@warp-drive/core@5.8.0(@babel/core@7.28.5)(@glint/template@1.7.3))
+      '@warp-drive/json-api': 5.8.0(patch_hash=c9c9862de00c8d70657d0fe231b13a0eb81770d04b5ffbdf15d87e4eb9a23f78)(@glint/template@1.7.3)(@warp-drive/core@5.8.0(patch_hash=97451be35eef181df0eff35e6b52b4a7e9fc09a4c157ae72559c1d2501637946)(@babel/core@7.28.5)(@glint/template@1.7.3))
+      '@warp-drive/legacy': 5.8.0(@glint/template@1.7.3)(@warp-drive/core@5.8.0(patch_hash=97451be35eef181df0eff35e6b52b4a7e9fc09a4c157ae72559c1d2501637946)(@babel/core@7.28.5)(@glint/template@1.7.3))(@warp-drive/utilities@5.8.0(@glint/template@1.7.3)(@warp-drive/core@5.8.0(patch_hash=97451be35eef181df0eff35e6b52b4a7e9fc09a4c157ae72559c1d2501637946)(@babel/core@7.28.5)(@glint/template@1.7.3)))
+      '@warp-drive/utilities': 5.8.0(@glint/template@1.7.3)(@warp-drive/core@5.8.0(patch_hash=97451be35eef181df0eff35e6b52b4a7e9fc09a4c157ae72559c1d2501637946)(@babel/core@7.28.5)(@glint/template@1.7.3))
     optionalDependencies:
       '@ember/test-helpers': 5.4.1(@babel/core@7.28.5)(@glint/template@1.7.3)
       qunit: 2.24.3

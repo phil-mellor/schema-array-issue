@@ -1,0 +1,154 @@
+diff --git a/dist/index-CQP2NSqg.js b/dist/index-CQP2NSqg.js
+index 4ac55db78a6f06c4be7514345b3c277a2fc17f3c..49b1a5b2629e15bf2ee9b361334fedcf38f0f17e 100644
+--- a/dist/index-CQP2NSqg.js
++++ b/dist/index-CQP2NSqg.js
+@@ -6770,7 +6770,7 @@ function convertToInt(prop) {
+   if (isNaN(num)) return null;
+   return num % 1 === 0 ? num : null;
+ }
+-function safeForEach(instance, arr, store, callback, target) {
++function safeForEach(instance, arr, store, callback, target, useProxyAccess) {
+   if (target === undefined) {
+     target = null;
+   }
+@@ -6789,7 +6789,9 @@ function safeForEach(instance, arr, store, callback, target) {
+   const length = arr.length; // we need to access length to ensure we are consumed
+ 
+   for (let index = 0; index < length; index++) {
+-    callback.call(target, arr[index], index, instance);
++    // For schema-arrays, access through the proxy to get ReactiveResource instances
++    const value = useProxyAccess ? instance[index] : arr[index];
++    callback.call(target, value, index, instance);
+   }
+   return instance;
+ }
+@@ -6839,6 +6841,9 @@ class ManagedArray {
+         if (prop === Context) {
+           return self[Context];
+         }
++        if (prop === SOURCE) {
++          return self[SOURCE];
++        }
+         const index = convertToInt(prop);
+         if (_SIGNAL.isStale && (index !== null || SYNC_PROPS.has(prop) || isArrayGetter(prop))) {
+           _SIGNAL.isStale = false;
+@@ -7001,15 +7006,28 @@ class ManagedArray {
+         }
+         if (isArrayGetter(prop)) {
+           let fn = boundFns.get(prop);
++          const isPlainSchemaArray = field.kind === 'schema-array' && !extensions;
+           if (fn === undefined) {
+             if (prop === 'forEach') {
+               fn = function () {
+                 consumeInternalSignal(_SIGNAL);
+                 transaction = true;
+-                const result = safeForEach(receiver, target, context.store, arguments[0], arguments[1]);
++                // For plain schema-arrays, forEach yields ReactiveResources (useProxyAccess = true)
++                const result = safeForEach(receiver, target, context.store, arguments[0], arguments[1], isPlainSchemaArray);
+                 transaction = false;
+                 return result;
+               };
++            } else if (isPlainSchemaArray && (prop === Symbol.iterator || prop === 'values' || prop === 'entries' || prop === 'keys')) {
++              // For plain schema-arrays, iterators yield ReactiveResources.
++              // The setSchemaArrayField function will convert them back to raw data on reassignment.
++              fn = function* () {
++                consumeInternalSignal(_SIGNAL);
++                const proxyArr = receiver;
++                const len = target.length;
++                for (let i = 0; i < len; i++) {
++                  yield proxyArr[i];
++                }
++              };
+             } else {
+               fn = function () {
+                 consumeInternalSignal(_SIGNAL);
+@@ -7857,10 +7875,52 @@ function setResourceField(context) {
+   })() : {};
+   return false;
+ }
++
++/**
++ * Converts a value to raw data suitable for storage in the cache.
++ * If the value is a ReactiveResource (embedded schema-object from a schema-array),
++ * we extract its raw data to avoid storing proxies in the cache.
++ */
++function toRawValue(value, parentArray) {
++  if (value === null || value === undefined || typeof value !== 'object') {
++    return value;
++  }
++
++  // Try to access the Context property directly (works through proxy get trap)
++  // Using direct access instead of `in` operator because proxies without `has` trap
++  // may not correctly respond to `in` checks
++  try {
++    // eslint-disable-next-line @typescript-eslint/no-explicit-any
++    const ctx = value[Context];
++    if (ctx && typeof ctx === 'object' && ctx.path !== null && ctx.path.length > 0 && parentArray) {
++      // This is a ReactiveResource - extract raw data from parent's SOURCE
++      const index = ctx.path[ctx.path.length - 1];
++      const numIndex = typeof index === 'number' ? index : parseInt(String(index), 10);
++      if (!isNaN(numIndex)) {
++        // Access the raw source array directly
++        // eslint-disable-next-line @typescript-eslint/no-explicit-any
++        const sourceArray = parentArray[SOURCE];
++        if (sourceArray && numIndex >= 0 && numIndex < sourceArray.length) {
++          return sourceArray[numIndex];
++        }
++      }
++    }
++  } catch {
++    // Not a ReactiveResource or access failed - return as-is
++  }
++  return value;
++}
+ function setSchemaArrayField(context) {
+-  const arrayValue = context.value === null ? null : context.value?.slice();
+   const fieldSignal = peekInternalSignal(context.signals, context.path.at(-1));
+   const peeked = fieldSignal?.value;
++  let arrayValue = null;
++  if (context.value !== null && Array.isArray(context.value)) {
++    // Convert any ReactiveResource instances back to raw data
++    // This handles the case where the user spreads a schema-array
++    // (e.g., [...this.gizmo.widgets, newWidget]) which yields ReactiveResources,
++    // then assigns the result back to the field
++    arrayValue = context.value.map(item => toRawValue(item, peeked ?? null));
++  }
+   context.store.cache.setAttr(context.resourceKey, context.path, arrayValue);
+   if (peeked) {
+     macroCondition(getGlobalConfig().WarpDrive.env.DEBUG) ? (test => {
+@@ -8124,6 +8184,15 @@ const RecordSymbols = new Set(symbolList);
+ function isPathMatch(a, b) {
+   return a.length === b.length && a.every((v, i) => v === b[i]);
+ }
++
++/**
++ * Checks if path `a` is a prefix of path `b`.
++ * For example, ['widgets', 0] is a prefix of ['widgets', 0, 'title']
++ */
++function isPathPrefix(prefix, path) {
++  if (prefix.length >= path.length) return false;
++  return prefix.every((v, i) => String(v) === String(path[i]));
++}
+ function isNonEnumerableProp(prop) {
+   return prop === 'constructor' || prop === 'prototype' || prop === '__proto__' || prop === 'toString' || prop === 'toJSON' || prop === 'toHTML' || typeof prop === 'symbol';
+ }
+@@ -8188,6 +8257,19 @@ class ReactiveResource {
+           if (key) {
+             if (Array.isArray(key)) {
+               if (context.path === null) return; // deep paths will be handled by embedded records
++
++              // For embedded records, check if the notification path starts with our path
++              // and has one more segment (the field being updated)
++              if (isEmbedded && isPathPrefix(context.path, key) && key.length === context.path.length + 1) {
++                // The last segment is the field name that was updated
++                const fieldName = key[key.length - 1];
++                const signal = signals.get(fieldName);
++                if (signal) {
++                  notifyInternalSignal(signal);
++                }
++                return;
++              }
++
+               // TODO we should have the notification manager
+               // ensure it is safe for each callback to mutate this array
+               if (isPathMatch(context.path, key)) {
