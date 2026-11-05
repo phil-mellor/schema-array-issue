@@ -1,8 +1,5 @@
 import type { ObjectSchema } from '@warp-drive/core/types/schema/fields';
-import {
-  DATA_TYPE_GIZMO,
-  DATA_TYPE_WIDGET,
-} from './constants';
+import { DATA_TYPE_GIZMO, DATA_TYPE_WIDGET } from './constants';
 import { withDefaults } from '@warp-drive/legacy/model/migration-support';
 
 export const WidgetSchema: ObjectSchema = {

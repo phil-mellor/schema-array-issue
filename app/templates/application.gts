@@ -3,259 +3,185 @@ import { fn } from '@ember/helper';
 import { get } from '@ember/object';
 import { service } from '@ember/service';
 import Component from '@glimmer/component';
-import { tracked } from '@glimmer/tracking';
 import type { Store } from '@warp-drive/core';
 import type { Gizmo, Widget } from 'schema-array-issue/data/types';
+import { Type } from '@warp-drive/core/types/symbols';
+import { DATA_TYPE_WIDGET } from 'schema-array-issue/data/constants';
 
-let globalWidgetCounter = 0;
+const setupCode = `const gizmo = store.createRecord('gizmo', { title: 'Example', widgets: [] });`;
 
-function createNewWidget() {
-  // Widget is a schema object, not a record, so we can't
-  // create it using the store service.
-  globalWidgetCounter++;
+const pushCode = `gizmo.widgets.push({ widgetId: 'widget-1', title: 'Widget 1' });`;
 
-  const widget = {
-    widgetId: `widget-${globalWidgetCounter}`,
-    title: `Original title for widget ${globalWidgetCounter}`,
+const reassignCode = `gizmo.widgets = [
+  ...gizmo.widgets,
+  { widgetId: 'widget-2', title: 'Widget 2' },
+];`;
+
+const renameCode = `widget.title = 'Renamed';`;
+
+const tableCode = `{{#each gizmo.widgets as |widget index|}}
+  <input value={{widget.title}} {{on "change" (fn this.updateTitle widget)}} />
+
+  {{!-- Get title from the widget }}
+  {{widget.title}}
+
+  {{!-- Look up the widget by index then get the title }}
+  {{#let (get gizmo.widgets index) as |current|}}
+    {{current.title}}
+  {{/let}}
+{{/each}}`;
+
+function newWidget(gizmo: Gizmo): Widget {
+  const number = gizmo.widgets.length + 1;
+  return {
+    [Type]: DATA_TYPE_WIDGET,
+    widgetId: `widget-${number}`,
+    title: `Widget ${number}`,
   };
-
-  return widget;
 }
 
 export default class ApplicationComponent extends Component {
   @service declare store: Store;
 
-  @tracked gizmo: Gizmo | null = null;
-  @tracked debuggingInformation: string =
-    'Click the button to refresh the state...';
+  bug1Gizmo = this.createGizmo();
+  bug2Gizmo = this.createGizmo();
 
-  createGizmo = () => {
-    // Gizmo is a record, so we can create it directly.
-    this.gizmo = this.store.createRecord('gizmo', {
+  createGizmo() {
+    return this.store.createRecord<Gizmo>('gizmo', {
       title: 'Example',
       widgets: [],
     });
+  }
+
+  push = () => {
+    this.bug1Gizmo.widgets.push(newWidget(this.bug1Gizmo));
   };
 
-  updateTitle = (event: Event) => {
-    this.gizmo!.title = (event.target as HTMLInputElement).value;
+  reassign = () => {
+    this.bug1Gizmo.widgets = [
+      ...this.bug1Gizmo.widgets,
+      newWidget(this.bug1Gizmo),
+    ];
   };
 
-  addWidgetUsingArrayPush = () => {
-    // Issue 4 - is it appropriate to cast to Widget here?
-    // The object doesn't have the [Type] symbol, so it's not a Widget.
-    const widget = createNewWidget() as Widget;
-    this.gizmo!.widgets.push(widget);
+  addWidget = () => {
+    this.bug2Gizmo.widgets.push(newWidget(this.bug2Gizmo));
   };
 
-  addWidgetByAssigningArray = () => {
-    // Issue 4 - is it appropriate to cast to Widget here?
-    // The object doesn't have the [Type] symbol, so it's not a Widget.
-    const widget = createNewWidget() as Widget;
-    const newArray = [...this.gizmo!.widgets, widget];
-    this.gizmo!.widgets = newArray;
-  };
-
-  updateWidget = (widget: Widget, event: Event) => {
+  updateTitle = (widget: Widget, event: Event) => {
     widget.title = (event.target as HTMLInputElement).value;
   };
 
-  refreshDebuggingInformation = () => {
-    this.debuggingInformation = JSON.stringify(
-      {
-        title: this.gizmo!.title,
-        widgets: this.gizmo!.widgets.map((widget) => ({
-          widgetId: widget.widgetId,
-          title: widget.title,
-        })),
-      },
-      null,
-      2
-    );
-  };
-
   <template>
-    {{outlet}}
-    <form>
-      {{#if this.gizmo}}
-        <div class="container">
-          <h1>Gizmo: "{{this.gizmo.title}}"</h1>
-          <p>This is the gizmo title. It is displayed in the heading above. You
-            can edit it in the input field below.</p>
-          <div>
-            <label for="title">Gizmo title:</label>
-            <input
-              type="text"
-              id="title"
-              value={{this.gizmo.title}}
-              {{on "change" this.updateTitle}}
-            />
-          </div>
+    <main>
+      <h1>Warp Drive schema-array bugs</h1>
+      <p>Each bug below has its own gizmo, set up like this:</p>
+      <pre>{{setupCode}}</pre>
 
-          <div class="good">
-            When tabbing out of the input field, the title will be updated
-            above. This is the expected behavior.
-          </div>
+      <section>
+        <h2>Bug 1: re-assigning the array crashes</h2>
+        <ol>
+          <li>Open the browser console.</li>
+          <li>
+            Click
+            <strong>Add with push</strong>. This runs:
+            <pre>{{pushCode}}</pre>
+            "Widget 1" appears in the list below.
+          </li>
+          <li>
+            Click
+            <strong>Add by re-assigning</strong>. This runs:
+            <pre>{{reassignCode}}</pre>
+          </li>
+        </ol>
 
-          <p>A gizmo can have multiple widgets. By default there are no widgets.</p>
-
-          <p>Widgets can be added using two different approaches:</p>
-          <ul>
-            <li>Using array push:
-              <code>this.gizmo!.widgets.push(widget)</code></li>
-            <li>By assigning a new array:
-              <code>this.gizmo!.widgets = [...this.gizmo!.widgets, widget]</code></li>
-          </ul>
-
-          <div class="buttons">
-            <button
-              type="button"
-              {{on "click" this.addWidgetUsingArrayPush}}
-            >Add widget using array push</button>
-            <button
-              type="button"
-              {{on "click" this.addWidgetByAssigningArray}}
-            >Add widget by re-assigning array</button>
-          </div>
-
-          <div class="alert">
-            Issue: when adding a second widget using array reassignment, the
-            application crashes with an infinite recursion error.
-          </div>
-        </div>
-
-        {{#if this.gizmo.widgets.length}}
-          <div class="container">
-            <h2>Widget display</h2>
-            <p>The widgets are displayed below. Here we enumerate the widgets
-              using two different approaches:</p>
-          </div>
-
-          <div class="cols">
-            <div class="col type1">
-              <h3>Widgets enumerated using #each:</h3>
-              <p>A simple each loop:
-                <code>#each this.gizmo.widgets as |widget|</code></p>
-              <ol>
-                {{#each this.gizmo.widgets as |widget|}}
-                  <li>
-                    {{widget.title}}
-                  </li>
-                {{/each}}
-              </ol>
-            </div>
-            <div class="col type2">
-              <h3>Widgets enumerated using #let, get and index:</h3>
-              <p>An #each loop that gets each element by its index:
-                <code>#each this.gizmo.widgets as |_ index|</code>
-                and
-                <code>let (get this.gizmo.widgets index) as |widget|</code></p>
-              <ol>
-                {{#each this.gizmo.widgets as |_ index|}}
-                  {{#let (get this.gizmo.widgets index) as |widget|}}
-                    <li>
-                      {{widget.title}}
-                    </li>
-                  {{/let}}
-                {{/each}}
-              </ol>
-            </div>
-          </div>
-
-          <div class="container">
-            <hr />
-            <h2>Widget editing</h2>
-            <p>We allow editing of the widget titles. Again, we use two
-              different approaches to enumerate the widgets:</p>
-          </div>
-
-          <div class="cols">
-            <div class="col type1">
-              <h3>Input fields enumerated using #each:</h3>
-              <p>A simple each loop:
-                <code>#each this.gizmo.widgets as |widget|</code></p>
-              <ol>
-                {{#each this.gizmo.widgets as |widget|}}
-                  <li>
-                    <input
-                      aria-label="Widget title"
-                      type="text"
-                      value={{widget.title}}
-                      {{on "change" (fn this.updateWidget widget)}}
-                    />
-                  </li>
-                {{/each}}
-              </ol>
-            </div>
-            <div class="col type2">
-              <h3>Input fields enumerated using #let, get and index:</h3>
-              <p>An #each loop that gets each element by its index:
-                <code>#each this.gizmo.widgets as |_ index|</code>
-                and
-                <code>let (get this.gizmo.widgets index) as |widget|</code></p>
-              <ol>
-                {{#each this.gizmo.widgets as |_ index|}}
-                  {{#let (get this.gizmo.widgets index) as |widget|}}
-                    <li>
-                      <input
-                        aria-label="Widget title"
-                        type="text"
-                        value={{widget.title}}
-                        {{on "change" (fn this.updateWidget widget)}}
-                      />
-                    </li>
-                  {{/let}}
-                {{/each}}
-              </ol>
-            </div>
-          </div>
-
-          <div class="container">
-            <div class="alert">
-              Issue: when editing a widget title using an input field from
-              either approach, the change does not update the display section
-              that uses the #each approach.
-            </div>
-
-            <div class="alert">
-              Issue: when editing a widget title using an input field from the
-              #let/get/index approach, the change does not propagate to the
-              corresponding input field in the #each approach.
-            </div>
-          </div>
-        {{else}}
-          <div class="container">
-            <p>No widgets found - please add some.</p>
-          </div>
-        {{/if}}
-
-        <hr />
-
-        <div class="container">
-          <h2>Debugging information</h2>
-          <p>You can display the current state of the gizmo by clicking the
-            button below.</p>
-          <p>This is
-            <strong>not</strong>
-            refreshed automatically when the gizmo is changed, only when you
-            click the button.</p>
-
-          <div class="buttons">
-            <button
-              type="button"
-              {{on "click" this.refreshDebuggingInformation}}
-            >Log state</button>
-          </div>
-
-          <div class="output">
-            <pre>{{this.debuggingInformation}}</pre>
-          </div>
-        </div>
-      {{else}}
         <div class="buttons">
-          <button type="button" {{on "click" this.createGizmo}}>Create Gizmo</button>
+          <button type="button" {{on "click" this.push}}>Add with push</button>
+          <button type="button" {{on "click" this.reassign}}>Add by re-assigning</button>
         </div>
-      {{/if}}
-    </form>
+
+        <ul class="widgets">
+          {{#each this.bug1Gizmo.widgets as |widget|}}
+            <li>{{widget.title}}</li>
+          {{else}}
+            <li>No widgets yet</li>
+          {{/each}}
+        </ul>
+
+        <p><strong>Expected:</strong> "Widget 2" appears below "Widget 1".</p>
+        <p><strong>Actual:</strong>
+          "Widget 2" doesn't appear, the page stops updating, and the console
+          shows
+          <code>RangeError: Maximum call stack size exceeded</code>. The spread
+          puts Widget 1's ReactiveResource, rather than its data, into the new
+          array, and reading it back recurses.</p>
+        <p>Reload the page before trying bug 2.</p>
+      </section>
+
+      <section>
+        <h2>Bug 2: editing a widget doesn't update its row</h2>
+        <p>Each row in the table renders the same widget's title in two ways:</p>
+        <pre>{{tableCode}}</pre>
+        <ol>
+          <li>
+            Click
+            <strong>Add widget</strong>. This pushes "Widget 1", as in bug 1.
+          </li>
+          <li>
+            Change the title to "Renamed" and press Tab. This runs:
+            <pre>{{renameCode}}</pre>
+          </li>
+        </ol>
+
+        <div class="buttons">
+          <button type="button" {{on "click" this.addWidget}}>Add widget</button>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th><code>widget.title</code></th>
+              <th><code>current.title</code></th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each this.bug2Gizmo.widgets as |widget index|}}
+              <tr>
+                <td>
+                  <input
+                    aria-label="Title"
+                    type="text"
+                    value={{widget.title}}
+                    {{on "change" (fn this.updateTitle widget)}}
+                  />
+                </td>
+                <td>{{widget.title}}</td>
+                <td>
+                  {{#let (get this.bug2Gizmo.widgets index) as |current|}}
+                    {{current.title}}
+                  {{/let}}
+                </td>
+              </tr>
+            {{else}}
+              <tr>
+                <td colspan="3">No widgets yet</td>
+              </tr>
+            {{/each}}
+          </tbody>
+        </table>
+
+        <p><strong>Expected:</strong> both columns show "Renamed".</p>
+        <p><strong>Actual:</strong>
+          only
+          <code>current.title</code>
+          shows "Renamed".
+          <code>widget.title</code>
+          still shows "Widget 1", because the edit doesn't notify the widget
+          that
+          <code>&#123;&#123;#each&#125;&#125;</code>
+          already rendered. Reading the widget by index gets the new title.</p>
+      </section>
+    </main>
   </template>
 }

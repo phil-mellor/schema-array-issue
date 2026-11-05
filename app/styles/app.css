@@ -1,5 +1,31 @@
-body, input, button {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+body,
+input,
+button {
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    Oxygen,
+    Ubuntu,
+    Cantarell,
+    'Open Sans',
+    'Helvetica Neue',
+    sans-serif;
+}
+
+main {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+section {
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+  padding: 0 1.5rem 1rem;
+  margin: 1.5rem 0;
 }
 
 code {
@@ -7,71 +33,47 @@ code {
   font-weight: bold;
 }
 
-.cols {
-  display: flex;
-  flex-direction: row;
-  gap: 1rem;
-  justify-content: center;
-}
-
-.col {
-  flex: 1;
-  max-width: 600px;
-}
-
-.alert {
-  background-color: #f8d7da;
-  border: 1px solid #f5c6cb;
-  color: #721c24;
-  padding: 1rem;
+pre {
+  background-color: #f4f4f4;
+  padding: 0.75rem 1rem;
   border-radius: 0.5rem;
-  margin: 1rem 0;
+  overflow-x: auto;
 }
 
-.good {
-  background-color: #d4edda;
-  border: 1px solid #c3e6cb;
-  color: #155724;
-  padding: 1rem;
+li {
+  margin-bottom: 0.5rem;
+}
+
+.note {
+  background-color: #fff3cd;
+  padding: 0.75rem 1rem;
   border-radius: 0.5rem;
-  margin: 1rem 0;
-}
-
-.type1 {
-  background-color: #9bb4f9;
-  color: #09126e;
-  padding: 0.5rem;
-}
-
-.type2 {
-  background-color: #ffe4c7;
-  color: #4b3b0c;
-  padding: 0.5rem;
-}
-
-h3 {
-  margin-top: 0;
 }
 
 button {
-  padding: 1rem 2rem;
+  padding: 0.5rem 1rem;
+  margin-right: 0.5rem;
   border-radius: 0.5rem;
   font-weight: bold;
 }
 
 .buttons {
-  text-align: center;
+  margin: 0.5rem 0;
 }
 
-.container {
-  max-width: 800px;
-  margin: 0 auto;
+.widgets {
+  background-color: #f4f4f4;
+  padding: 0.5rem 2rem;
 }
 
-hr {
-  margin: 2rem 0;
+table {
+  width: 100%;
+  border-collapse: collapse;
 }
 
-input {
-  width: 200px;
+th,
+td {
+  border: 1px solid #ccc;
+  padding: 0.5rem;
+  text-align: left;
 }

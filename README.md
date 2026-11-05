@@ -1,105 +1,53 @@
 # schema-array-issue
 
-This is a demo application to illustrate an issue with schema-arrays.
+A minimal Ember app that reproduces two Warp Drive bugs with schema-arrays:
 
-I'm not sure if this is a bug in the libraries used, or if I am not declaring the schemas
-correctly.
+- writing existing items back to a schema-array stores proxies in
+  the cache.
+- editing a field of an item in a schema-array doesn't update the
+  rendered row.
 
-# Problem description
+It uses `@warp-drive/*` 5.8.0 in legacy mode. Use the `main` branch to see the bugs. The `patch`
+branch applies local patches that work around them.
 
-The scenario:
+## Setup
 
-A resource schema (gizmo) has a schema-array field (widgets). Each widget has a title attribute.
+```sh
+pnpm install
+pnpm start
+```
 
-I want to add widgets to the gizmo and make them editable in the UI. I want the changes to be reflected in the UI
-immediately (when clicking the button or when tabbing out of the input field).
+Open http://localhost:4200 and follow the steps for each bug.
 
-For debugging purposes, you can click the "Log state" button to dump the current state of the gizmo
-to the page. This is not refreshed automatically when the gizmo is changed, only when you click the button.
+Each bug has a gizmo record: a new, unsaved record with a `widgets` schema-array. Widgets are schema-objects
+with `widgetId` and `title` attributes. The schemas are in [`app/data/schemas.ts`](app/data/schemas.ts),
+and the page is [`app/templates/application.gts`](app/templates/application.gts).
 
-## Adding widgets - typescript issues
+## Bug 1: re-assigning the array crashes
 
-It's unclear how best to create a new widget object. I can't create it using the store service's createRecord method, because it is an object schema, not a record schema.
+Add a widget with `push`, then add another by re-assigning the array:
 
-If I create it as a POJO, it doesn't have the [Type] symbol, so it's not a Widget. Is it appropriate to cast it to a Widget, or is there a better way to create the object?
+```ts
+gizmo.widgets.push(widget);
+gizmo.widgets = [...gizmo.widgets, widget];
+```
 
-## Adding widgets - updating the widgets array
+**Expected:** the gizmo has two widgets.
 
-When the user clicks the button to add a widget, it can be added to the widgets array using two different approaches:
+**Actual:** rendering throws `Maximum call stack size exceeded`, and the page stops responding.
 
-- Using array push:
-  `this.gizmo!.widgets.push(widget)`
-- By assigning a new array:
-  `this.gizmo!.widgets = [...this.gizmo!.widgets, widget]`
+## Bug 2: edits don't update `{{#each}}` rows
 
-Both methods work the first widget. When adding a second widget using array reassignment the application crashes with an infinite recursion error. (See the console log for the error.)
+Add a widget and change its title. The page renders each title twice:
 
-What is the correct way to update the widgets array when adding or removing a widget?
+- `{{#each gizmo.widgets as |widget|}}` with `{{widget.title}}`
+- `{{get gizmo.widgets index}}` with `.title`
 
-## Rendering and updating widgets
+**Expected:** both show the new title.
 
-There are two approaches to displaying the widgets in the UI:
+**Actual:** only the second updates.
 
-- Using #each:
-  `#each this.gizmo.widgets as |widget|`
-- Using #let, get and index:
-  `#each this.gizmo.widgets as |_ index|` and `let (get this.gizmo.widgets index) as |widget|`
+## Development
 
-When editing a widget title via an input field, the change does not update the display section that uses #each enumeration. However, the change is reflected in the display section that uses #let, get, and index enumeration.
-
-When editing a widget title using an input field from the #let/get/index approach, the change does not propagate to the corresponding input field in the #each approach.
-
-If you click the "Log state" button, you will see that the widgets array seems to have been updated correctly, but the DOM does not seem to be updated.
-
-# Development
-
-## Prerequisites
-
-You will need the following things properly installed on your computer.
-
-- [Git](https://git-scm.com/)
-- [Node.js](https://nodejs.org/)
-- [pnpm](https://pnpm.io/)
-- [Google Chrome](https://google.com/chrome/)
-
-## Installation
-
-- `git clone <repository-url>` this repository
-- `cd schema-array-issue`
-- `pnpm install`
-
-## Running / Development
-
-- `pnpm start`
-- Visit your app at [http://localhost:4200](http://localhost:4200).
-- Visit your tests at [http://localhost:4200/tests](http://localhost:4200/tests).
-
-### Code Generators
-
-Make use of the many generators for code, try `pnpm ember help generate` for more details
-
-### Running Tests
-
-- `pnpm test`
-
-### Linting
-
-- `pnpm lint`
-- `pnpm lint:fix`
-
-### Building
-
-- `pnpm vite build --mode development` (development)
-- `pnpm build` (production)
-
-### Deploying
-
-Specify what it takes to deploy your app.
-
-## Further Reading / Useful Links
-
-- [ember.js](https://emberjs.com/)
-- [Vite](https://vite.dev)
-- Development Browser Extensions
-  - [ember inspector for chrome](https://chrome.google.com/webstore/detail/ember-inspector/bmdblncegkenkacieihfhpjfppoconhi)
-  - [ember inspector for firefox](https://addons.mozilla.org/en-US/firefox/addon/ember-inspector/)
+- `pnpm lint` and `pnpm lint:fix`
+- `pnpm build`
